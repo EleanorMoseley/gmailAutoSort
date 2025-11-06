@@ -2,13 +2,21 @@ function main(n) {
 
   /* -Labels- 
   Invoices 
-    - Invoices
-    - Statements 
+    - Invoices  
     - Receipts 
   Appointment Reminders 
   Confirmation Codes 
 
-  Note: bills should be checked first, and then reciepts 
+  Note: All labels should be checked first before moving (ie, business and shopping )
+
+  To-Do: 
+  Change Invoices to Financial 
+  Implement Receipts sorting 
+  Start "promotional" or by company (idk best name) - Newsletters
+    - LinkedIn
+    - Etsy 
+  Shipping/ Shopping 
+  Banking!! 
 
   */
 
