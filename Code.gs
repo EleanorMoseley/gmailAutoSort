@@ -1,13 +1,12 @@
 // – GLOBAL VARIABLES – Reused and only defined once for runtime optimization 
 const REF = {
   // regex
-  findDate: /(?:\b(?<monthn>\d{1,2})\/(?<dayn>\d{1,2})\/(?<yearn>\d{2,4}))|(?:(?<month>\b[a-zA-Z]{3,9})\s(?<day>\d\d?)(?:[a-zA-Z]{2,3})?(?:,\s(?<year>\d{2,4}))?)/ ,
-  invoiceRegex: /invoice/i, 
-  statementRegex: /statement/i,
+  findDate: /(?:\b(?<monthn>\d{1,2})\/(?<dayn>\d{1,2})\/(?<yearn>\d{2,4}))|(?:(?<month>\b[a-z]{3,9})\s(?<day>\d\d?)(?:[a-z]{2,3})?(?:,\s(?<year>\d{2,4}))?)/i,
+  invoiceRegex: /invoice|statement/i, 
   invoiceExcludeRegex: /personal|earn/i,
   apptReminderRegex: /appointment/i, 
   pastTenseRegex: /was/i, 
-  verifCodeRegex: /verification\scode|verify(?=.*code)|code(?=.*verify) /is, 
+  verifCodeRegex: /verification\scode|verify.*?code|code.*?verify/is, 
   receiptRegex: /receipt|receipt/is, 
   todayRegex: /today/is,
 
@@ -47,7 +46,7 @@ Note: bills should be checked first, and then reciepts
   const parentInvoiceL = GmailApp.getUserLabelByName("Invoices"); 
   //    Sub-Labels 
   const invoiceL = GmailApp.getUserLabelByName("Invoices/Invoices"); 
-  const statementL = GmailApp.getUserLabelByName("Invoices/Statements"); 
+  // const statementL = GmailApp.getUserLabelByName("Invoices/Statements"); 
   const receiptsL = GmailApp.getUserLabelByName("Invoices/Receipts"); 
   
 
@@ -68,39 +67,30 @@ Note: bills should be checked first, and then reciepts
       // inboxThreads[i].addLabel(invoiceL); 
       // inboxThreads[i].addLabel(parentInvoiceL);
     }
-    // Add "Statements" label
-    if (REF.statementRegex.test(temp_subject) && !REF.invoiceExcludeRegex.test(temp_subject)){
-      Logger.log("Statement"); 
-      // inboxThreads[i].addLabel(statementL);
-      // inboxThreads[i].addLabel(parentInvoiceL);
-    }
 
     // APPOINTMENT
-    // If "Appointment" in subject (and no past tense references, i.e. exclude "How was your appointment?")
+    // "Appointment" in subject (and no past tense references, i.e. exclude "How was your appointment?")
     if(REF.apptReminderRegex.test(temp_subject) && !REF.pastTenseRegex.test(temp_subject)) {
-
+      
+      // ADD APPT LABEL
+      // inboxThreads[i].addLabel(apptReminderL);
+      
       // Print if Appointment 
       Logger.log("Is Appointment");
 
-      // Get message recieved date 
+      // Appointment Date 
+      let apptDate = null;
+
+      // Email recieved date 
       const sentDate = inboxThreads[i].getLastMessageDate(); 
 
-      // ADD APPT LABEL
-      // inboxThreads[i].addLabel(apptReminderL); 
-
-      // Check for appointment date in subject  
-      let tempDate = temp_subject.match(REF.findDate); 
-      // Logger.log("parsed month day year: " + tempDate.groups.month + ", "+ tempDate.groups.day + ", " + tempDate.groups.year); 
-      Logger.log("found month of "+ temp_subject + " " + tempDate);
-      let parseMonth = tempDate.groups.month ? tempDate.groups.month : tempDate.groups.monthn; 
-      let parseDay = tempDate.groups.day ? tempDate.groups.day : tempDate.groups.dayn; 
-      let parseYear = tempDate.groups.year ? tempDate.groups.year : tempDate.groups.yearn; 
-
-
-      const parseDateResults = parseDate(parseMonth, parseDay, parseYear, sentDate); 
-      // Logger.log(i + " " + parseDateResults[1]);
-      const apptDate = new Date(parseDateResults[0]); 
-        
+      // GET APPOINTMENT DATE 
+      if (temp_subject.match(REF.today) != null){ // If appointment says "today"
+        apptDate = sentDate; 
+      } else {
+        apptDate = parseDate(temp_subject, sentDate)[0]; 
+      }
+      
 
       Logger.log("MESSAGE " + i); 
       Logger.log(parseDateResults[1]); 
@@ -112,10 +102,10 @@ Note: bills should be checked first, and then reciepts
 
 
       Logger.log("Time Elapsed: " + timeElapsed); 
-      if (REF.today.getTime() - apptDate.getTime() > (7 * 24 * 60 * 60 * 1000)){ // If appointment is more than 7 days past 
-        Logger.log("Archive - more than 7 days past appointment."); 
+      if (REF.today.getTime() - apptDate.getTime() > (4 * 24 * 60 * 60 * 1000)){ // If appointment is more than 7 days past 
+        Logger.log("Archive - more than 4 days past appointment."); 
       } else {
-        Logger.log("Keep in inbox - not more than 7 days past appointment.");
+        Logger.log("Keep in inbox - not more than 4 days past appointment.");
       }
     }
 
