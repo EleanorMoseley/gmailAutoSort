@@ -1,5 +1,4 @@
 // – GLOBAL VARIABLES – Reused and only defined once for runtime optimization 
-
 const REF = {
   // regex
   findDate: /(?:\b(?<monthn>\d{1,2})\/(?<dayn>\d{1,2})\/(?<yearn>\d{2,4}))|(?:(?<month>\b[a-zA-Z]{3,9})\s(?<day>\d\d?)(?:[a-zA-Z]{2,3})?(?:,\s(?<year>\d{2,4}))?)/ ,
@@ -8,6 +7,9 @@ const REF = {
   invoiceExcludeRegex: /personal|earn/i,
   apptReminderRegex: /appointment/i, 
   pastTenseRegex: /was/i, 
+  verifCodeRegex: /verification\scode|verify(?=.*code)|code(?=.*verify) /is, 
+  receiptRegex: /receipt|receipt/is, 
+  todayRegex: /today/is,
 
 
   // Months Array (zero indexed)
@@ -27,13 +29,27 @@ const REF = {
 
 function labels(n) {
 
+  /* -Labels- 
+  Invoices 
+    - Invoices
+    - Statements 
+    - Receipts 
+  Appointment Reminders 
+  Confirmation Codes 
+
+Note: bills should be checked first, and then reciepts 
+
+  */
+
   // Get Labels
-  // Nested Invoice Labels 
+  const apptReminderL = GmailApp.getUserLabelByName("Appointment Reminders");
+  const confcodeL = GmailApp.getUserLabelByName("Confirmation Codes"); 
   const parentInvoiceL = GmailApp.getUserLabelByName("Invoices"); 
   //    Sub-Labels 
   const invoiceL = GmailApp.getUserLabelByName("Invoices/Invoices"); 
   const statementL = GmailApp.getUserLabelByName("Invoices/Statements"); 
-  const apptReminderL = GmailApp.getUserLabelByName("Appointment Reminders"); 
+  const receiptsL = GmailApp.getUserLabelByName("Invoices/Receipts"); 
+  
 
   // Subject line temp variable 
   let temp_subject = undefined;
@@ -87,7 +103,6 @@ function labels(n) {
         
 
       Logger.log("MESSAGE " + i); 
-      // if (!dayFound) {Logger.log("No appointment date found, used sent date + 7 days")}
       Logger.log(parseDateResults[1]); 
       Logger.log("Appointment Time: "+ tempDate[0]);
       Logger.log("Appointment Date Parsed: " + apptDate.toDateString()); 
