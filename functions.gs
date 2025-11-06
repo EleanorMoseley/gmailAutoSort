@@ -1,3 +1,8 @@
+// Input: (string: email subject, string: date email was recieved) 
+//    Date is parsed from subject string, if possible 
+//    If not, the sent date +7 days is the assumed appointment date 
+// Returns: [Date(), string for console log testing]
+
 function parseDate (temp_subject, sentDate) {
     const apptDate = new Date (null); 
     let monthFound = false; 
@@ -67,3 +72,15 @@ function parseDate (temp_subject, sentDate) {
     
     return [apptDate, `Month Found: ${monthFound}, Day Found: ${dayFound}, Year Found: ${yearFound}, Used Modified Recieved Date: ${!dayFound || !monthFound}`]; 
 }
+
+// Input: (Date: appointment date, int: days to compare to) 
+// Returns: bool: true if appointment has passed daysCompare, otherwise false 
+function olderThan(apptDate, daysCompare){
+  const timeElapsedMils = (REF.today.getTime() - apptDate.getTime()); 
+  return (timeElapsedMils > (daysCompare*REF.millsPerDay)); 
+}
+
+
+
+
+
