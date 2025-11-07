@@ -6,7 +6,8 @@ const REF = {
   invoiceExcludeRegex: /personal|earn/i,
   apptReminderRegex: /appointment/i, 
   pastTenseRegex: /was/i, 
-  verifCodeRegex: /verification\scode|verify.*?code|code.*?verify/i, 
+  // verifCodeRegex: /verification\scode|passcode|verify.*?code|code.*?verify/i, 
+  verifCodeRegex: /verification\scode|passcode|verify|verify.*?code|code.*?verify/i,
   receiptRegex: /receipt|receipt/is, 
   todayRegex: /today/is,
 

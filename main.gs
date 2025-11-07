@@ -1,7 +1,7 @@
 function main(n) {
 
   /* -Labels- 
-  Invoices 
+  Financial 
     - Invoices  
     - Receipts 
   Appointment Reminders 
@@ -12,6 +12,7 @@ function main(n) {
   To-Do: 
   Change Invoices to Financial 
   Implement Receipts sorting 
+  Passcodes 
   Start "promotional" or by company (idk best name) - Newsletters
     - LinkedIn
     - Etsy 
@@ -22,12 +23,12 @@ function main(n) {
 
   // Get Labels
   const apptReminderL = GmailApp.getUserLabelByName("Appointment Reminders");
-  const confcodeL = GmailApp.getUserLabelByName("Confirmation Codes"); 
-  const parentInvoiceL = GmailApp.getUserLabelByName("Invoices"); 
+  const verifcodeL = GmailApp.getUserLabelByName("Verification Codes"); 
+  const parentFinancialL = GmailApp.getUserLabelByName("Financial"); 
   //    Sub-Labels 
-  const invoiceL = GmailApp.getUserLabelByName("Invoices/Invoices"); 
-  // const statementL = GmailApp.getUserLabelByName("Invoices/Statements"); 
-  const receiptsL = GmailApp.getUserLabelByName("Invoices/Receipts"); 
+  const invoiceL = GmailApp.getUserLabelByName("Financial/Invoices"); 
+  // const statementL = GmailApp.getUserLabelByName("Financial/Statements"); 
+  const receiptsL = GmailApp.getUserLabelByName("Financial/Receipts"); 
   
 
   // Subject line temp variable 
@@ -40,12 +41,13 @@ function main(n) {
     // Subject line 
     temp_subject = inboxThreads[i].getFirstMessageSubject(); 
     Logger.log(temp_subject); 
-    // INVOICES
-    // Add "Invoices" label 
+
+    // FINANCIAL
+    // Add "Financial" label 
     if (REF.invoiceRegex.test(temp_subject) && !REF.invoiceExcludeRegex.test(temp_subject)){
       Logger.log("Invoice"); 
       // inboxThreads[i].addLabel(invoiceL); 
-      // inboxThreads[i].addLabel(parentInvoiceL);
+      // inboxThreads[i].addLabel(parentFinancialL);
     }
 
     // APPOINTMENT
@@ -84,6 +86,24 @@ function main(n) {
         Logger.log("Archive - more than 4 days past appointment."); 
       } else {
         Logger.log("Keep in inbox - not more than 4 days past appointment.");
+      }
+
+    }
+
+    // Passcodes 
+    if (REF.verifCodeRegex.test(temp_subject)){
+      // LABEL 
+      Logger.log("Verification Code"); 
+      //inboxThreads[i].addLabel(verifcodeL); 
+
+      // AGE CHECK / ARCHIVE
+      // Email recieved date 
+      const sentDate = inboxThreads[i].getLastMessageDate(); 
+
+      if (olderThan(sentDate, 1)){ // If received more than one day ago  
+        Logger.log("Archive - verification more than 1 day old."); 
+      } else {
+        Logger.log("Keep in inbox - code not more than 1 day old.");
       }
 
     }
