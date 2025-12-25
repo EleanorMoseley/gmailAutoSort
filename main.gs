@@ -2,17 +2,15 @@ function main(n) {
 
   /* -Labels- 
   Financial 
-    - Invoices  
+    - Invoices  *
     - Receipts 
-  Appointment Reminders 
-  Confirmation Codes 
+  Appointment Reminders *
+  Verification Codes *
 
   Note: All labels should be checked first before moving (ie, business and shopping )
 
   To-Do: 
-  Change Invoices to Financial 
   Implement Receipts sorting 
-  Passcodes 
   Start "promotional" or by company (idk best name) - Newsletters
     - LinkedIn
     - Etsy 
@@ -91,6 +89,19 @@ function main(n) {
     }
 
     // Passcodes 
+
+    /*  Passcode Logic 
+
+      Pre-screen: 
+        Key Words: code, passcode, verification, security, login, sign in, sign( /-)on, authentication
+        or 
+        Sender: no-reply@, account@, security@
+
+      If pre-screen passes, then screen message body: 
+        
+
+    
+    */
     if (REF.verifCodeRegex.test(temp_subject)){
       // LABEL 
       Logger.log("Verification Code"); 
