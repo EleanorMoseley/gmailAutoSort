@@ -33,7 +33,7 @@ function main(n) {
   let temp_subject = undefined;
   
   // Get Inbox Threads 
-  const inboxThreads = GmailApp.getInboxThreads(0, 100);
+  const inboxThreads = GmailApp.getInboxThreads(0, 1);
   // FOR each message in inbox 
   for (let i = 0; i < inboxThreads.length; i++) {
     // Subject line 
@@ -93,15 +93,53 @@ function main(n) {
     /*  Passcode Logic 
 
       Pre-screen: 
-        Key Words: code, passcode, verification, security, login, sign in, sign( /-)on, authentication
-        or 
-        Sender: no-reply@, account@, security@
+        Subject Key Words: code, passcode, verification, security, login, sign in, sign( /-)on, authentication
 
-      If pre-screen passes, then screen message body: 
-        
+        else:  
+          X - Sender: no-reply@, account@, security@
+          -> Doesn't work, too broad. 
+          ** NEXT ** 
+            Use GmailAPI for getting message metadata to check more carefully for prescreen filter to make more narrow 
+
+
+
+          Body: code AND passcode OR verification OR security OR login OR sign in OR sign( /-)on OR authentication
+
+      If pre-screen passes, then screen message body:
+        Body RegEx: numeric code 4-8 chars long, or capital alphanumeric 6-8 with at least one number and one letter
+        If code screen passes, then confirm as one time code 
 
     
     */
+
+    const msg = Gmail.Users.Messages.get(
+        'me',
+        inboxThreads[i].getId(),
+        { format: 'metadata', metadataHeaders: [
+            'From',
+            'Reply-To',
+            'Precedence',
+            'Auto-Submitted'
+        ]}
+      );
+
+      const headers = msg.payload.headers.reduce((acc, h) => {
+      acc[h.name] = h.value;
+      return acc;
+    }, {});
+
+    Logger.log(
+      'Message ID: %s\nThread ID: %s\nSize: %s bytes\nFrom: %s\nReply-To: %s\nPrecedence: %s\nAuto-Submitted: %s',
+      msg.id,
+      msg.threadId,
+      msg.sizeEstimate,
+      headers['From'] || '(none)',
+      headers['Reply-To'] || '(none)',
+      headers['Precedence'] || '(none)',
+      headers['Auto-Submitted'] || '(none)'
+    );
+
+
     if (REF.verifCodeRegex.test(temp_subject)){
       // LABEL 
       Logger.log("Verification Code"); 
@@ -110,6 +148,8 @@ function main(n) {
       // AGE CHECK / ARCHIVE
       // Email recieved date 
       const sentDate = inboxThreads[i].getLastMessageDate(); 
+
+      
 
       if (olderThan(sentDate, 1)){ // If received more than one day ago  
         Logger.log("Archive - verification more than 1 day old."); 

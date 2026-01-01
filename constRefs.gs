@@ -10,7 +10,7 @@ const REF = {
   verifCodeRegex: /verification\scode|passcode|verify|verify.*?code|code.*?verify/i,
   receiptRegex: /receipt|receipt/is, 
   todayRegex: /today/is,
-  codeRegex: /\b\d{4,8}\b|\b[A-Z0-9]{6,8}\b/m,
+  codeRegex: /\b\d{4,8}\b|\b(?=[A-Z0-9]{6,8}\b)(?=.*[A-Z])(?=.*\d)[A-Z0-9]+\b/m,
 
 
   // Months Array (zero indexed)
