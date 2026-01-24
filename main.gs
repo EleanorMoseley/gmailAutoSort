@@ -33,7 +33,7 @@ function main(n) {
   let temp_subject = undefined;
   
   // Get Inbox Threads 
-  const inboxThreads = GmailApp.getInboxThreads(0, 1);
+  const inboxThreads = GmailApp.getInboxThreads(0, 15);
   // FOR each message in inbox 
   for (let i = 0; i < inboxThreads.length; i++) {
     // Subject line 
@@ -112,34 +112,34 @@ function main(n) {
     
     */
 
-    const msg = Gmail.Users.Messages.get(
-        'me',
-        inboxThreads[i].getId(),
-        { format: 'metadata', metadataHeaders: [
-            'From',
-            'Reply-To',
-            'Precedence',
-            'Auto-Submitted'
-        ]}
-      );
+    // const msg = Gmail.Users.Messages.get(
+    //     'me',
+    //     inboxThreads[i].getId(),
+    //     { format: 'metadata', metadataHeaders: [
+    //         'From',
+    //         'Reply-To',
+    //         'Precedence',
+    //         'Auto-Submitted'
+    //     ]}
+    //   );
 
-      const headers = msg.payload.headers.reduce((acc, h) => {
-      acc[h.name] = h.value;
-      return acc;
-    }, {});
+    //   const headers = msg.payload.headers.reduce((acc, h) => {
+    //   acc[h.name] = h.value;
+    //   return acc;
+    // }, {});
 
-    Logger.log(
-      'Message ID: %s\nThread ID: %s\nSize: %s bytes\nFrom: %s\nReply-To: %s\nPrecedence: %s\nAuto-Submitted: %s',
-      msg.id,
-      msg.threadId,
-      msg.sizeEstimate,
-      headers['From'] || '(none)',
-      headers['Reply-To'] || '(none)',
-      headers['Precedence'] || '(none)',
-      headers['Auto-Submitted'] || '(none)'
-    );
+    // Logger.log(
+    //   'Message ID: %s\nThread ID: %s\nSize: %s bytes\nFrom: %s\nReply-To: %s\nPrecedence: %s\nAuto-Submitted: %s',
+    //   msg.id,
+    //   msg.threadId,
+    //   msg.sizeEstimate,
+    //   headers['From'] || '(none)',
+    //   headers['Reply-To'] || '(none)',
+    //   headers['Precedence'] || '(none)',
+    //   headers['Auto-Submitted'] || '(none)'
+    // );
 
-
+    // OTC 
     if (REF.verifCodeRegex.test(temp_subject)){
       // LABEL 
       Logger.log("Verification Code"); 
