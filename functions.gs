@@ -10,12 +10,17 @@ function parseDate (temp_subject, sentDate) {
     let yearFound = false; 
 
     // Check for appointment date in subject  
-      const tempDate = temp_subject.match(REF.findDate); 
-      // Logger.log("parsed month day year: " + tempDate.groups.month + ", "+ tempDate.groups.day + ", " + tempDate.groups.year); 
-      Logger.log("found month of "+ temp_subject + " " + tempDate);
-      let month = tempDate.groups.month ? tempDate.groups.month : tempDate.groups.monthn; 
-      let day = tempDate.groups.day ? tempDate.groups.day : tempDate.groups.dayn; 
-      let year = tempDate.groups.year ? tempDate.groups.year : tempDate.groups.yearn; 
+    const tempDate = temp_subject.match(REF.findDate); 
+    if (!tempDate) {
+      // No date found in subject, use sent date + 7 days
+      apptDate.setTime(sentDate.getTime()); 
+      apptDate.setDate(apptDate.getDate() + 7);
+      return [apptDate, `Month Found: ${monthFound}, Day Found: ${dayFound}, Year Found: ${yearFound}, Used Modified Recieved Date: true`];
+    }
+    let month = tempDate.groups.month ? tempDate.groups.month : tempDate.groups.monthn; 
+    let day = tempDate.groups.day ? tempDate.groups.day : tempDate.groups.dayn; 
+    let year = tempDate.groups.year ? tempDate.groups.year : tempDate.groups.yearn; 
+    Logger.log("found month of "+ temp_subject + " " + tempDate);
 
     if (month && day){
       // Day – convert to int, verify, and set 

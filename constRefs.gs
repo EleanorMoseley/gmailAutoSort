@@ -7,8 +7,11 @@ const REF = {
   apptReminderRegex: /appointment/i, 
   pastTenseRegex: /was/i, 
   // verifCodeRegex: /verification\scode|passcode|verify.*?code|code.*?verify/i, 
-  verifCodeRegex: /verification\scode|passcode|verify|verify.*?code|code.*?verify/i,
-  receiptRegex: /receipt|receipt/is, 
+  verifCodeRegex: /verification\scode|passcode|verify|verify.*?code|code.*?verify|sign\Win/i,
+  // receiptRegex: /receipt|receipt/is, 
+  bankingRegex: /statement|payment|deposit/i, 
+  bankingExcludeRegex: /newsletter/i,
+  deliveryRegex: /deliver/i,
   todayRegex: /today/is,
   codeRegex: /\b\d{4,8}\b|\b(?=[A-Z0-9]{6,8}\b)(?=.*[A-Z])(?=.*\d)[A-Z0-9]+\b/m,
 
@@ -26,5 +29,9 @@ const REF = {
   today: new Date(Date.now()), 
 
   // Mills Per Day 
-  millsPerDay: (24 * 60 * 60 * 1000)
+  millsPerDay: (24 * 60 * 60 * 1000),
+  
+  deliveryAddresses: /^system@entrata.com$/i,
+  bankingAddresses: /^usbank@notifications.usbank.com$|^hello@email.rocketmoney.com$/i,
+  insuranceAddresses: /^geico@et.geico.com$|^rentersmail@assurant.com$/i,
 };
